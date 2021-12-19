@@ -21,3 +21,10 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/target/generated-sources/annotations/com/getir/ReadingIsGood/controller/book/BookApiMapperImpl.java
+/target/generated-sources/annotations/com/getir/ReadingIsGood/controller/customer/CustomerApiMapperImpl.java
+/target/generated-sources/annotations/com/getir/ReadingIsGood/controller/order/OrderApiMapperImpl.java
+/target/generated-sources/annotations/com/getir/ReadingIsGood/controller/statistics/StatisticsMapperImpl.java
+/target/generated-sources/annotations/com/getir/ReadingIsGood/service/book/BookMapperImpl.java
+/target/generated-sources/annotations/com/getir/ReadingIsGood/service/customer/CustomerMapperImpl.java
+/target/generated-sources/annotations/com/getir/ReadingIsGood/service/order/OrderMapperImpl.java
