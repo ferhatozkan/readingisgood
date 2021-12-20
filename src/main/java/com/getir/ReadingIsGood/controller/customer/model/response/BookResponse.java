@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BookResponseViewModel {
+public class BookResponse {
     private String name;
     private int count;
     private double price;

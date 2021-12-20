@@ -1,7 +1,7 @@
 package com.getir.ReadingIsGood.service.order;
 
-import com.getir.ReadingIsGood.service.GenericResponse;
 import com.getir.ReadingIsGood.service.order.model.request.AddOrderDto;
+import com.getir.ReadingIsGood.service.order.model.response.AddOrderResponseDto;
 import com.getir.ReadingIsGood.service.order.model.response.OrderResponseDto;
 
 import java.util.ArrayList;
@@ -11,11 +11,11 @@ public interface OrderService {
 
     OrderResponseDto getOrderById(int id);
 
-    GenericResponse<Integer> addOrder(AddOrderDto addOrderDto);
+    AddOrderResponseDto addOrder(AddOrderDto addOrderRequestDto);
 
-    GenericResponse<ArrayList<OrderResponseDto>> getOrders(int customerId, int page);
+    ArrayList<OrderResponseDto> getOrders(int customerId, int page);
 
-    GenericResponse<ArrayList<OrderResponseDto>> getOrdersByDateInterval(Date startDate, Date endDate);
+    ArrayList<OrderResponseDto> getOrdersByDateInterval(Date startDate, Date endDate);
 }
 
 

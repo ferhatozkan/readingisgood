@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name="`Order`") // Orders because Order is a reserved word
+@Table(name = "`Order`") // Orders because Order is a reserved word
 public class Order {
 
     @Id

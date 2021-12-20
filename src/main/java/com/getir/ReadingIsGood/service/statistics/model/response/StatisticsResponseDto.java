@@ -1,4 +1,4 @@
-package com.getir.ReadingIsGood.service.statistics.model;
+package com.getir.ReadingIsGood.service.statistics.model.response;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StatisticsDto {
+public class StatisticsResponseDto {
     private String month;
     private int totalOrderCount;
     private int totalBookCount;

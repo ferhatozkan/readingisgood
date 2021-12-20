@@ -21,9 +21,7 @@ public class MyUserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         var customer = customerRepository.getByEmail(email);
-        if(customer == null){
-            return null;
-        }
+        if (customer == null) throw new UsernameNotFoundException("Incorrect email or password");
         return new User(customer.getEmail(), customer.getPassword(), new ArrayList<>());
     }
 }

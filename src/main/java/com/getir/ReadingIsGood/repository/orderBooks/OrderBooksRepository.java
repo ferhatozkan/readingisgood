@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 
 @Repository
-public interface OrderBooksRepository  extends JpaRepository<OrderBook, Integer> {
+public interface OrderBooksRepository extends JpaRepository<OrderBook, Integer> {
     ArrayList<OrderBook> findAllByOrderId(int orderId);
 }

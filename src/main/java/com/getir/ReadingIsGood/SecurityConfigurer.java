@@ -34,8 +34,14 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/customer/authenticate").permitAll()
                 .antMatchers("/customer/register").permitAll()
-                .antMatchers( "/h2-console/**").permitAll()
-                .antMatchers( "/h2-console/login.do**").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/", "/webjars/**", "/login/**", "/resources/**", "/v3/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
@@ -47,12 +53,12 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception{
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
 }

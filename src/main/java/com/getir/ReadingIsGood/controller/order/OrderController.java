@@ -1,15 +1,16 @@
 package com.getir.ReadingIsGood.controller.order;
 
-import com.getir.ReadingIsGood.controller.customer.model.response.OrderResponseViewModel;
+import com.getir.ReadingIsGood.controller.customer.model.response.OrderResponse;
 import com.getir.ReadingIsGood.controller.order.model.request.AddOrderRequest;
 import com.getir.ReadingIsGood.controller.order.model.request.GetOrdersByDateInterval;
-import com.getir.ReadingIsGood.service.GenericResponse;
+import com.getir.ReadingIsGood.controller.order.model.response.AddOrderResponse;
 import com.getir.ReadingIsGood.service.order.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 
 @RestController
@@ -26,59 +27,27 @@ public class OrderController {
     }
 
     @PostMapping(value = "/")
-    public GenericResponse<Integer> addOrder(@RequestBody AddOrderRequest request){
+    public ResponseEntity<AddOrderResponse> addOrder(@Valid @RequestBody AddOrderRequest request){
 
-        var response = new GenericResponse<Integer>();
-        response.setSuccess(true);
-
-        var result = orderService.addOrder(orderApiMapper.mapAddOrderRequestToAddOrderDto(request));
-
-        if(!result.isSuccess()){
-            response.setSuccess(false);
-            response.setMessage(result.getMessage());
-            return response;
-        }
-
-        response.setData(result.getData());
-        return response;
+        var addOrderResponseDto = orderService.addOrder(orderApiMapper.mapAddOrderRequestToAddOrderDto(request));
+        return ResponseEntity.status(HttpStatus.OK).body(orderApiMapper.mapAddOrderResponseDtoToAddOrderResponse(addOrderResponseDto));
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Object> getOrder(@PathVariable int id){
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable int id){
 
-        if(id < 1){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("OrderId should be greater than or equal to 1");
-        }
-
-        var order = orderService.getOrderById(id);
-
-        if(order == null)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Order Not found");
-
-        return ResponseEntity.status(HttpStatus.OK).body(orderApiMapper.mapOrderResponseDtoToOrderResponseViewModel(order));
+        var orderResponseDto = orderService.getOrderById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(orderApiMapper.mapOrderResponseDtoToOrderResponse(orderResponseDto));
     }
 
     @GetMapping(value = "/")
-    public GenericResponse<ArrayList<OrderResponseViewModel>> getOrdersByDateInterval(@RequestBody GetOrdersByDateInterval request){
+    public ResponseEntity<ArrayList<OrderResponse>> getOrdersByDateInterval(@Valid @RequestBody GetOrdersByDateInterval request){
 
-        var result = orderService.getOrdersByDateInterval(request.getStartDate(), request.getEndDate());
-
-        var response = new GenericResponse<ArrayList<OrderResponseViewModel>>();
-        response.setSuccess(true);
-
-        if(!result.isSuccess()){
-            response.setSuccess(false);
-            response.setMessage(result.getMessage());
-            return response;
+        var orderResponseDtos = orderService.getOrdersByDateInterval(request.getStartDate(), request.getEndDate());
+        var orders = new ArrayList<OrderResponse>();
+        for (var orderResponseDto : orderResponseDtos) {
+            orders.add(orderApiMapper.mapOrderResponseDtoToOrderResponse(orderResponseDto));
         }
-
-        var orders = new ArrayList<OrderResponseViewModel>();
-
-        for (var order : result.getData()) {
-            orders.add(orderApiMapper.mapOrderResponseDtoToOrderResponseViewModel(order));
-        }
-
-        response.setData(orders);
-        return response;
+        return ResponseEntity.status(HttpStatus.OK).body(orders);
     }
 }

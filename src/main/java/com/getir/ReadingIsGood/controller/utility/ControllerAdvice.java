@@ -1,35 +1,47 @@
 package com.getir.ReadingIsGood.controller.utility;
 
-import org.springframework.http.HttpHeaders;
+import com.getir.ReadingIsGood.controller.utility.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDate;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ControllerAdvice extends ResponseEntityExceptionHandler {
+@RestControllerAdvice
+public class ControllerAdvice  {
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleItemNotFoundException(Exception exception) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+    }
 
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDate.now());
-        body.put("status", status.value());
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Object> handleBusinessException(BusinessException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.builder().status(HttpStatus.BAD_REQUEST.value())
+                .errors(List.of(ErrorDetail.builder()
+                .title(exception.getMessage())
+                .type(exception.getClass().getSimpleName()).build())).build());
+    }
 
-        List<String> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(x -> x.getDefaultMessage())
-                .collect(Collectors.toList());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        return handleValidationException(ex.getBindingResult(), ex.getClass().getSimpleName());
+    }
 
-        body.put("errors", errors);
+    private ResponseEntity<ErrorResponse> handleValidationException(BindingResult bindingResult, String simpleName) {
+        List<ErrorDetail> errorDetails = bindingResult.getAllErrors().stream().map(item -> ErrorDetail.builder()
+                .title(item.getObjectName() + ": " + item.getDefaultMessage())
+                .type(simpleName)
+                .build()).collect(Collectors.toList());
 
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errors(errorDetails).status(HttpStatus.BAD_REQUEST.value()).build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 }

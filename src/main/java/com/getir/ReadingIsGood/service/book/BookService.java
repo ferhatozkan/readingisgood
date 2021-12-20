@@ -1,10 +1,12 @@
 package com.getir.ReadingIsGood.service.book;
 
 import com.getir.ReadingIsGood.service.book.model.BookDto;
+import com.getir.ReadingIsGood.service.book.model.response.AddBookResponseDto;
+import com.getir.ReadingIsGood.service.book.model.response.SetStockResponseDto;
 
 public interface BookService {
 
-    int addBook(BookDto bookDto);
+    AddBookResponseDto addBook(BookDto bookDto);
 
-    boolean setStock(int bookId, int stockAmount);
+    SetStockResponseDto setStock(int bookId, int stockAmount);
 }

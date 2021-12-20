@@ -1,9 +1,11 @@
 package com.getir.ReadingIsGood.controller.order.model.request;
 
-import com.getir.ReadingIsGood.controller.order.model.BookItemViewModel;
 import lombok.*;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Getter
 @Setter
@@ -11,6 +13,8 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @Builder
 public class AddOrderRequest {
+    @Min(value = 1, message = "customerId must be minimum 1")
     private int customerId;
-    private ArrayList<BookItemViewModel> books;
+    @NotEmpty
+    private List<@Valid BookItem> books;
 }

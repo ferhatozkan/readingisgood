@@ -1,12 +1,15 @@
 package com.getir.ReadingIsGood.controller.customer;
 
 import com.getir.ReadingIsGood.controller.customer.model.request.AddCustomerRequest;
-import com.getir.ReadingIsGood.controller.customer.model.response.BookResponseViewModel;
-import com.getir.ReadingIsGood.controller.customer.model.response.BookResponseViewModel.BookResponseViewModelBuilder;
-import com.getir.ReadingIsGood.controller.customer.model.response.OrderResponseViewModel;
-import com.getir.ReadingIsGood.controller.customer.model.response.OrderResponseViewModel.OrderResponseViewModelBuilder;
+import com.getir.ReadingIsGood.controller.customer.model.response.AddCustomerResponse;
+import com.getir.ReadingIsGood.controller.customer.model.response.AddCustomerResponse.AddCustomerResponseBuilder;
+import com.getir.ReadingIsGood.controller.customer.model.response.BookResponse;
+import com.getir.ReadingIsGood.controller.customer.model.response.BookResponse.BookResponseBuilder;
+import com.getir.ReadingIsGood.controller.customer.model.response.OrderResponse;
+import com.getir.ReadingIsGood.controller.customer.model.response.OrderResponse.OrderResponseBuilder;
 import com.getir.ReadingIsGood.service.customer.model.CustomerDto;
 import com.getir.ReadingIsGood.service.customer.model.CustomerDto.CustomerDtoBuilder;
+import com.getir.ReadingIsGood.service.customer.model.response.AddCustomerResponseDto;
 import com.getir.ReadingIsGood.service.order.model.response.BookResponseDto;
 import com.getir.ReadingIsGood.service.order.model.response.OrderResponseDto;
 import java.util.ArrayList;
@@ -15,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-12-20T12:24:31+0300",
+    date = "2021-12-20T23:10:00+0300",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 11.0.12 (Oracle Corporation)"
 )
 @Component
@@ -38,41 +41,54 @@ public class CustomerApiMapperImpl implements CustomerApiMapper {
     }
 
     @Override
-    public OrderResponseViewModel mapOrderResponseDtoToOrderResponseViewModel(OrderResponseDto orderResponseDto) {
+    public OrderResponse mapOrderResponseDtoToOrderResponse(OrderResponseDto orderResponseDto) {
         if ( orderResponseDto == null ) {
             return null;
         }
 
-        OrderResponseViewModelBuilder orderResponseViewModel = OrderResponseViewModel.builder();
+        OrderResponseBuilder orderResponse = OrderResponse.builder();
 
-        orderResponseViewModel.totalPrice( orderResponseDto.getTotalPrice() );
-        orderResponseViewModel.books( bookResponseDtoArrayListToBookResponseViewModelArrayList( orderResponseDto.getBooks() ) );
+        orderResponse.totalPrice( orderResponseDto.getTotalPrice() );
+        orderResponse.books( bookResponseDtoArrayListToBookResponseArrayList( orderResponseDto.getBooks() ) );
 
-        return orderResponseViewModel.build();
+        return orderResponse.build();
     }
 
-    protected BookResponseViewModel bookResponseDtoToBookResponseViewModel(BookResponseDto bookResponseDto) {
+    @Override
+    public AddCustomerResponse mapAddCustomerResponseDtoToAddCustomerResponse(AddCustomerResponseDto addCustomerResponseDto) {
+        if ( addCustomerResponseDto == null ) {
+            return null;
+        }
+
+        AddCustomerResponseBuilder addCustomerResponse = AddCustomerResponse.builder();
+
+        addCustomerResponse.id( addCustomerResponseDto.getId() );
+
+        return addCustomerResponse.build();
+    }
+
+    protected BookResponse bookResponseDtoToBookResponse(BookResponseDto bookResponseDto) {
         if ( bookResponseDto == null ) {
             return null;
         }
 
-        BookResponseViewModelBuilder bookResponseViewModel = BookResponseViewModel.builder();
+        BookResponseBuilder bookResponse = BookResponse.builder();
 
-        bookResponseViewModel.name( bookResponseDto.getName() );
-        bookResponseViewModel.count( bookResponseDto.getCount() );
-        bookResponseViewModel.price( bookResponseDto.getPrice() );
+        bookResponse.name( bookResponseDto.getName() );
+        bookResponse.count( bookResponseDto.getCount() );
+        bookResponse.price( bookResponseDto.getPrice() );
 
-        return bookResponseViewModel.build();
+        return bookResponse.build();
     }
 
-    protected ArrayList<BookResponseViewModel> bookResponseDtoArrayListToBookResponseViewModelArrayList(ArrayList<BookResponseDto> arrayList) {
+    protected ArrayList<BookResponse> bookResponseDtoArrayListToBookResponseArrayList(ArrayList<BookResponseDto> arrayList) {
         if ( arrayList == null ) {
             return null;
         }
 
-        ArrayList<BookResponseViewModel> arrayList1 = new ArrayList<BookResponseViewModel>();
+        ArrayList<BookResponse> arrayList1 = new ArrayList<BookResponse>();
         for ( BookResponseDto bookResponseDto : arrayList ) {
-            arrayList1.add( bookResponseDtoToBookResponseViewModel( bookResponseDto ) );
+            arrayList1.add( bookResponseDtoToBookResponse( bookResponseDto ) );
         }
 
         return arrayList1;
