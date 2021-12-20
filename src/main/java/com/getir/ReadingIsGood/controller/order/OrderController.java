@@ -3,6 +3,7 @@ package com.getir.ReadingIsGood.controller.order;
 import com.getir.ReadingIsGood.controller.customer.model.response.OrderResponseViewModel;
 import com.getir.ReadingIsGood.controller.order.model.request.AddOrderRequest;
 import com.getir.ReadingIsGood.controller.order.model.request.GetOrdersByDateInterval;
+import com.getir.ReadingIsGood.service.GenericResponse;
 import com.getir.ReadingIsGood.service.order.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -72,20 +73,26 @@ public class OrderController {
     }
 
     @GetMapping(value = "/")
-    public ResponseEntity<Object> getOrdersByDateInterval(@RequestBody GetOrdersByDateInterval request){
+    public GenericResponse<ArrayList<OrderResponseViewModel>> getOrdersByDateInterval(@RequestBody GetOrdersByDateInterval request){
 
-        if((request.getEndDate() == null && request.getStartDate() == null) || request.getEndDate().before(request.getStartDate())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("OrderId should be greater than or equal to 1");
+        var result = orderService.getOrdersByDateInterval(request.getStartDate(), request.getEndDate());
+
+        var response = new GenericResponse<ArrayList<OrderResponseViewModel>>();
+        response.setSuccess(true);
+
+        if(!result.isSuccess()){
+            response.setSuccess(false);
+            response.setMessage(result.getMessage());
+            return response;
         }
 
-        var orders = orderService.getOrdersByDateInterval(request.getStartDate(), request.getEndDate());
+        var orders = new ArrayList<OrderResponseViewModel>();
 
-        var response = new ArrayList<OrderResponseViewModel>();
-
-        for (var order : orders) {
-            response.add(orderApiMapper.mapOrderResponseDtoToOrderResponseViewModel(order));
+        for (var order : result.getData()) {
+            orders.add(orderApiMapper.mapOrderResponseDtoToOrderResponseViewModel(order));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        response.setData(orders);
+        return response;
     }
 }

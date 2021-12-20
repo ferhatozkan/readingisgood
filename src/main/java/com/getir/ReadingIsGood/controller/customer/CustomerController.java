@@ -1,11 +1,19 @@
 package com.getir.ReadingIsGood.controller.customer;
 
 import com.getir.ReadingIsGood.controller.customer.model.request.AddCustomerRequest;
+import com.getir.ReadingIsGood.controller.customer.model.request.AuthenticationRequest;
+import com.getir.ReadingIsGood.controller.customer.model.response.AuthenticationResponse;
 import com.getir.ReadingIsGood.controller.customer.model.response.OrderResponseViewModel;
+import com.getir.ReadingIsGood.service.GenericResponse;
+import com.getir.ReadingIsGood.service.authentication.MyUserDetailsServiceImpl;
 import com.getir.ReadingIsGood.service.customer.CustomerService;
 import com.getir.ReadingIsGood.service.order.OrderService;
-import org.springframework.http.HttpStatus;
+import com.getir.ReadingIsGood.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -17,51 +25,69 @@ public class CustomerController {
     private final CustomerService customerService;
     private final OrderService orderService;
     private final CustomerApiMapper customerApiMapper;
+    private final AuthenticationManager authenticationManager;
+    private final MyUserDetailsServiceImpl myUserDetailsService;
+    private final JwtUtil jwtTokenUtil;
 
     public CustomerController(CustomerService customerService,
                               OrderService orderService,
-                              CustomerApiMapper customerApiMapper) {
+                              CustomerApiMapper customerApiMapper,
+                              AuthenticationManager authenticationManager,
+                              MyUserDetailsServiceImpl myUserDetailsService,
+                              JwtUtil jwtTokenUtil) {
         this.customerService = customerService;
         this.orderService = orderService;
         this.customerApiMapper = customerApiMapper;
+        this.authenticationManager = authenticationManager;
+        this.myUserDetailsService = myUserDetailsService;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
-    @PostMapping(value = "/")
-    public ResponseEntity<Object> addCustomer(@RequestBody AddCustomerRequest request){
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
 
-        if(request.getAge() < 1){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Age should be greater than or equal to 1");
+        try {
+            authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
+        }
+        catch(BadCredentialsException ex){
+            throw new Exception("Incorrect email or password");
         }
 
-        if(request.getName() == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name cant be null");
-        }
+        final UserDetails userDetails = myUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
 
-        int customerId = customerService.addCustomer(customerApiMapper.mapAddCustomerRequestToCustomerDto(request));
+        final String jwt = jwtTokenUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    }
 
+    @PostMapping(value = "/register")
+    public GenericResponse<Integer> addCustomer(@RequestBody AddCustomerRequest request){
 
-        return ResponseEntity.status(HttpStatus.OK).body(customerId);
+        GenericResponse<Integer> result = customerService.addCustomer(customerApiMapper.mapAddCustomerRequestToCustomerDto(request));
+
+        return result;
     }
 
     @GetMapping(value = "/{customerId}/order")
-    public ResponseEntity<Object> getOrders(@PathVariable int customerId, @RequestParam int page){
+    public GenericResponse<ArrayList<OrderResponseViewModel>> getOrders(@PathVariable int customerId, @RequestParam int page){
 
-        if(customerId < 1){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CustomerId should be greater than or equal to 1");
+        var result = orderService.getOrders(customerId, page);
+
+        var response = new GenericResponse<ArrayList<OrderResponseViewModel>>();
+        response.setSuccess(true);
+
+        if(!result.isSuccess()){
+            response.setSuccess(false);
+            response.setMessage(result.getMessage());
+            return response;
         }
 
-        if(page < 0){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Page should be greater than or equal to 0");
+        var orders = new ArrayList<OrderResponseViewModel>();
+
+        for (var order : result.getData()) {
+            orders.add(customerApiMapper.mapOrderResponseDtoToOrderResponseViewModel(order));
         }
 
-        var orders = orderService.getOrders(customerId, page);
-
-        var response = new ArrayList<OrderResponseViewModel>();
-
-        for (var order : orders) {
-            response.add(customerApiMapper.mapOrderResponseDtoToOrderResponseViewModel(order));
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        response.setData(orders);
+        return response;
     }
 }

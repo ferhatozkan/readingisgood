@@ -6,6 +6,7 @@ import com.getir.ReadingIsGood.repository.order.Order;
 import com.getir.ReadingIsGood.repository.order.OrderRepository;
 import com.getir.ReadingIsGood.repository.orderBooks.OrderBook;
 import com.getir.ReadingIsGood.repository.orderBooks.OrderBooksRepository;
+import com.getir.ReadingIsGood.service.GenericResponse;
 import com.getir.ReadingIsGood.service.order.model.request.AddOrderDto;
 import com.getir.ReadingIsGood.service.order.model.response.BookResponseDto;
 import com.getir.ReadingIsGood.service.order.model.response.OrderResponseDto;
@@ -150,33 +151,59 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ArrayList<OrderResponseDto> getOrders(int customerId, int page) {
+    public GenericResponse<ArrayList<OrderResponseDto>>  getOrders(int customerId, int page) {
+
+        var response = new GenericResponse<ArrayList<OrderResponseDto>>();
+        response.setSuccess(true);
+
+        if(customerId < 1){
+            response.setSuccess(false);
+            response.setMessage("CustomerId should be greater than or equal to 1");
+            return response;
+        }
+
+        if(page < 0){
+            response.setSuccess(false);
+            response.setMessage("Page should be greater than or equal to 0");
+            return response;
+        }
 
         Pageable pageable = PageRequest.of(page, 3, Sort.by("CreatedOn").descending());
         var orders = orderRepository.findAllByCustomerId(customerId, pageable);
 
-        var response = new ArrayList<OrderResponseDto>();
+        var result = new ArrayList<OrderResponseDto>();
 
         for (var order : orders) {
             var orderResponseDto = getOrderResponseDto(order.getId(), order.getTotalPrice());
-            response.add(orderResponseDto);
+            result.add(orderResponseDto);
         }
 
+        response.setData(result);
         return response;
     }
 
     @Override
-    public ArrayList<OrderResponseDto> getOrdersByDateInterval(Date startDate, Date endDate) {
+    public GenericResponse<ArrayList<OrderResponseDto>> getOrdersByDateInterval(Date startDate, Date endDate) {
+
+        var response = new GenericResponse<ArrayList<OrderResponseDto>>();
+        response.setSuccess(true);
+
+        if(startDate == null || endDate == null || endDate.before(startDate)){
+            response.setSuccess(false);
+            response.setMessage("Page should be greater than or equal to 0");
+            return response;
+        }
 
         var orders = orderRepository.findByCreatedOnBetween(startDate, endDate);
 
-        var response = new ArrayList<OrderResponseDto>();
+        var result = new ArrayList<OrderResponseDto>();
 
         for (var order : orders) {
             var orderResponseDto = getOrderResponseDto(order.getId(), order.getTotalPrice());
-            response.add(orderResponseDto);
+            result.add(orderResponseDto);
         }
 
+        response.setData(result);
         return response;
     }
 

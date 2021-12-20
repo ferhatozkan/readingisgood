@@ -9,5 +9,7 @@ import lombok.*;
 @Builder
 public class CustomerDto {
     private String name;
+    private String email;
+    private String password;
     private int age;
 }

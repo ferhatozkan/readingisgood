@@ -20,6 +20,10 @@ public class Customer {
     private Integer id;
     @Column(name = "Name", nullable = false)
     private String name;
+    @Column(name = "Email", nullable = false)
+    private String email;
+    @Column(name = "Password", nullable = false)
+    private String password;
     @Column(name = "Age", nullable = false)
     private int age;
     @Column(name = "CreatedOn", nullable = false)
