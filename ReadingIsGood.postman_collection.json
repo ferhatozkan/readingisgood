@@ -1,0 +1,291 @@
+{
+	"info": {
+		"_postman_id": "30bef234-b698-43df-84e5-e5af2d29478e",
+		"name": "ReadingIsGood",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "All Orders of Customer With Pagination",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/customer/5/order?page=0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"customer",
+						"5",
+						"order"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders By Time Interval",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"startDate\" : \"2021-12-18T13:33:03.969Z\",\r\n    \"endDate\" : \"2021-12-20T13:33:03.969Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/order/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"order",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Customer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmb28iLCJleHAiOjE2Mzk5OTI5MDgsImlhdCI6MTYzOTk1NjkwOH0.YzDEwckbHpzd839hYZXQ8kWFDjGskdyEBNlbeHSObsM",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"fesdsdrtg\",\r\n    \"age\"  : 233,\r\n    \"email\"  : \"ferhat@ssmail.com\",\r\n    \"password\" : \"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/customer/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"customer",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Book",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZXJoYXRAc3NtYWlsLmNvbSIsImV4cCI6MTY0MDAzMjA4MywiaWF0IjoxNjM5OTk2MDgzfQ.okeYmuRKsAaJLiqUcFCEvHlQJhp0Jk611pfy8YdXVxY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"Beyaz Gemi\",\r\n    \"stock\"  : 20,\r\n    \"price\" : 8\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/book/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"book",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Stock",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZXJoYXRAc3NtYWlsLmNvbSIsImV4cCI6MTY0MDAyODAzNywiaWF0IjoxNjM5OTkyMDM3fQ.nWnE-vSD8FyIEVBnFAbh8xrMINJFIKeq04PAPJ1cjCk",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"stock\" : 100\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/book/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"book",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZXJoYXRAc3NtYWlsLmNvbSIsImV4cCI6MTY0MDAyODAzNywiaWF0IjoxNjM5OTkyMDM3fQ.nWnE-vSD8FyIEVBnFAbh8xrMINJFIKeq04PAPJ1cjCk",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n  \"customerId\" : 1,                           \r\n  \"books\"      : [ \r\n                     { \"bookId\" : \"2\", \r\n                       \"count\"  : \"2\"},\r\n\r\n                     { \"bookId\" : \"3\", \r\n                       \"count\"  : \"4\"}\r\n                 ] \r\n} ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/order/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"order",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order By Id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZXJoYXRAc3NtYWlsLmNvbSIsImV4cCI6MTY0MDAyODAzNywiaWF0IjoxNjM5OTkyMDM3fQ.nWnE-vSD8FyIEVBnFAbh8xrMINJFIKeq04PAPJ1cjCk",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/order/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"order",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authenticate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\" : \"ferhat@mail.com\",\r\n    \"password\" : \"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/customer/authenticate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"customer",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Statistics By Customer Id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZXJoYXRAc3NtYWlsLmNvbSIsImV4cCI6MTY0MDAzMDA5NiwiaWF0IjoxNjM5OTk0MDk2fQ.iw1k4j3DuJTUX1LiRcTS-Rrg9sk2VbDxZrzPtYBxTUw",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/statistics/customer/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"statistics",
+						"customer",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
