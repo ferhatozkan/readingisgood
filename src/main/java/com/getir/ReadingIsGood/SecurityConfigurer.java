@@ -1,7 +1,7 @@
 package com.getir.ReadingIsGood;
 
-import com.getir.ReadingIsGood.service.authentication.MyUserDetailsServiceImpl;
 import com.getir.ReadingIsGood.filters.JwtRequestFilter;
+import com.getir.ReadingIsGood.service.authentication.MyUserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,9 +29,20 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/customer/authenticate", "/customer/register").permitAll().anyRequest().authenticated()
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/customer/authenticate").permitAll()
+                .antMatchers("/customer/register").permitAll()
+                .antMatchers( "/h2-console/**").permitAll()
+                .antMatchers( "/h2-console/login.do**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         http.addFilterBefore(jwtRequestFiler, UsernamePasswordAuthenticationFilter.class);
+        http.headers().frameOptions().disable();
     }
 
     @Override

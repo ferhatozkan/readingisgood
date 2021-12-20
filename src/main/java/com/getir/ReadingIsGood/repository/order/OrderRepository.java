@@ -10,5 +10,6 @@ import java.util.Date;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     ArrayList<Order> findAllByCustomerId(int customerId, Pageable pageable);
+    ArrayList<Order> findAllByCustomerId(int customerId);
     ArrayList<Order> findByCreatedOnBetween(Date start, Date end);
 }

@@ -1,2 +1,4 @@
-package com.getir.ReadingIsGood.controller.statistics.model.response;public class StatisticViewModel {
+package com.getir.ReadingIsGood.controller.statistics.model;
+
+public class StatisticViewModel {
 }

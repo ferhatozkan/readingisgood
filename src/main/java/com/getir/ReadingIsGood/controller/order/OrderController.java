@@ -26,35 +26,21 @@ public class OrderController {
     }
 
     @PostMapping(value = "/")
-    public ResponseEntity<Object> addOrder(@RequestBody AddOrderRequest request){
+    public GenericResponse<Integer> addOrder(@RequestBody AddOrderRequest request){
 
-        if (request == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request can't be null");
+        var response = new GenericResponse<Integer>();
+        response.setSuccess(true);
+
+        var result = orderService.addOrder(orderApiMapper.mapAddOrderRequestToAddOrderDto(request));
+
+        if(!result.isSuccess()){
+            response.setSuccess(false);
+            response.setMessage(result.getMessage());
+            return response;
         }
 
-        if(request.getCustomerId() < 1){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CustomerId should be greater or equal to 1");
-        }
-
-        if(request.getBooks() == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("At least one book should be in the order");
-        }
-
-        if(request.getBooks().stream().anyMatch(n -> n.getBookId() < 1)){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book id should be greater than or equal to 1");
-        }
-
-        if(request.getBooks().stream().anyMatch(n -> n.getCount() < 1)){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Added count should be greater than or equal to 1");
-        }
-
-        int orderId = orderService.addOrder(orderApiMapper.mapAddOrderRequestToAddOrderDto(request));
-
-        if (orderId == 0){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred while inserting order");
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(orderId);
+        response.setData(result.getData());
+        return response;
     }
 
     @GetMapping(value = "/{id}")

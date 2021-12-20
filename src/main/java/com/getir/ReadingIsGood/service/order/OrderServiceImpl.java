@@ -49,25 +49,39 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int addOrder(AddOrderDto addOrderRequestDto) {
+    public GenericResponse<Integer> addOrder(AddOrderDto addOrderRequestDto) {
 
-        if (addOrderRequestDto.getCustomerId() < 1)
-            // Log
-            return 0;
+        var response = new GenericResponse<Integer>();
+        response.setSuccess(true);
 
-        if (addOrderRequestDto.getBooks() == null) {
-            // Log
-            return 0;
+        if(addOrderRequestDto == null){
+            response.setMessage("Please provide a customerId");
+            response.setSuccess(false);
+            return response;
         }
 
-        if (addOrderRequestDto.getBooks().stream().anyMatch(n -> n.getBookId() < 1)) {
-            // Log
-            return 0;
+        if(addOrderRequestDto.getCustomerId() < 1){
+            response.setMessage("CustomerId must be greater than or equal to 1");
+            response.setSuccess(false);
+            return response;
+        }
+
+        if(addOrderRequestDto.getBooks() == null){
+            response.setMessage("Please provide a books to order");
+            response.setSuccess(false);
+            return response;
+        }
+
+        if(addOrderRequestDto.getBooks().stream().anyMatch(n -> n.getBookId() < 1)){
+            response.setMessage("BookId must be greater than or equal to 1");
+            response.setSuccess(false);
+            return response;
         }
 
         if (addOrderRequestDto.getBooks().stream().anyMatch(n -> n.getCount() < 1)) {
-            // Log
-            return 0;
+            response.setMessage("Added count should be greater than or equal to 1");
+            response.setSuccess(false);
+            return response;
         }
 
         var requestedBooks = addOrderRequestDto.getBooks();
@@ -79,9 +93,10 @@ public class OrderServiceImpl implements OrderService {
 
 
         for (var bookId : requestedBookIds) {
-            // Check if all books exist
             if (!bookRepository.existsById(bookId)) {
-                return 0;
+                response.setMessage("Added book does not exist");
+                response.setSuccess(false);
+                return response;
             }
         }
 
@@ -95,21 +110,30 @@ public class OrderServiceImpl implements OrderService {
                     .findFirst()
                     .orElse(null);
 
-            if (book == null)
-                return 0;
+            if (book == null) {
+                response.setMessage("Added book does not exist");
+                response.setSuccess(false);
+                return response;
+            }
 
-            //Check Stock
-            if (book.getStock() < requestedBook.getCount())
-                return 0;
+            if (book.getStock() < requestedBook.getCount()) {
+                response.setMessage(String.format("Stock of %s book is not enough", book.getName()));
+                response.setSuccess(false);
+                return response;
+            }
 
             book.setStock(book.getStock() - requestedBook.getCount());
 
             var bookStock = bookRepository.save(book).getStock();
 
-            if (book.getStock() != bookStock)
-                return 0;
+            if (book.getStock() != bookStock) {
+                response.setMessage("Stock update operation failed!");
+                response.setSuccess(false);
+                return response;
+            }
 
             var bookPrice = book.getPrice();
+
             totalPrice += bookPrice * requestedBook.getCount();
         }
 
@@ -120,10 +144,13 @@ public class OrderServiceImpl implements OrderService {
 
         int orderId = orderRepository.save(newOrder).getId();
 
-        if (orderId == 0)
-            return 0;
+        if (orderId == 0){
+            response.setMessage("Order creation failed!");
+            response.setSuccess(false);
+            return response;
+        }
 
-        ArrayList<OrderBook> orderBookArrayList = new ArrayList<OrderBook>();
+        ArrayList<OrderBook> orderBookArrayList = new ArrayList<>();
 
         for (var requestedBook : requestedBooks) {
             var book = books.stream()
@@ -144,10 +171,13 @@ public class OrderServiceImpl implements OrderService {
         List<OrderBook> orderBooks = orderBooksRepository.saveAll(orderBookArrayList);
 
         if (orderBooks.stream().count() != requestedBooks.stream().count()) {
-            return 0;
+            response.setMessage("OrderStock insertion failed!");
+            response.setSuccess(false);
+            return response;
         }
 
-        return orderId;
+        response.setData(orderId);
+        return response;
     }
 
     @Override

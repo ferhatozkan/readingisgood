@@ -11,7 +11,7 @@ public interface OrderService {
 
     OrderResponseDto getOrderById(int id);
 
-    int addOrder(AddOrderDto addOrderDto);
+    GenericResponse<Integer> addOrder(AddOrderDto addOrderDto);
 
     GenericResponse<ArrayList<OrderResponseDto>> getOrders(int customerId, int page);
 
